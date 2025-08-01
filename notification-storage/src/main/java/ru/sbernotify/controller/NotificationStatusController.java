@@ -1,9 +1,9 @@
-package ru.sbernotify.storage.controller;
+package ru.sbernotify.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.sbernotify.storage.model.NotificationStatus;
-import ru.sbernotify.storage.service.NotificationStatusService;
+import ru.sbernotify.model.NotificationStatus;
+import ru.sbernotify.service.NotificationStatusService;
 import java.util.List;
 import java.util.UUID;
 

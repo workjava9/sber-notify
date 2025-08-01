@@ -1,9 +1,9 @@
-package ru.sbernotify.storage.service;
+package ru.sbernotify.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.sbernotify.storage.model.NotificationStatus;
-import ru.sbernotify.storage.repository.NotificationStatusRepository;
+import ru.sbernotify.model.NotificationStatus;
+import ru.sbernotify.repository.NotificationStatusRepository;
 import java.util.List;
 import java.util.UUID;
 
