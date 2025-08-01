@@ -42,7 +42,6 @@
 8. Мониторинг и метрики: Spring Boot Actuator, готов к интеграции с Prometheus
 9. Сборка проекта: Gradle с использованием Kotlin DSL
 
-
 ## Старт
 
 1. **Запуск зависимостей (Kafka, PostgreSQL):**
