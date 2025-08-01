@@ -27,44 +27,39 @@ jobs:
         with:
           context: ./api-gateway
           push: true
-          tags: yourdockerhub/api-gateway:latest
+          tags: d3mka369/api-gateway:latest
 
       - name: Build and push Email Service
         uses: docker/build-push-action@v5
         with:
           context: ./email-service
           push: true
-          tags: yourdockerhub/email-service:latest
+          tags: d3mka369/email-service:latest
 
       - name: Build and push SMS Service
         uses: docker/build-push-action@v5
         with:
           context: ./sms-service
           push: true
-          tags: yourdockerhub/sms-service:latest
+          tags: d3mka369/sms-service:latest
 
       - name: Build and push Push Service
         uses: docker/build-push-action@v5
         with:
           context: ./push-service
           push: true
-          tags: yourdockerhub/push-service:latest
+          tags: d3mka369/push-service:latest
 
       - name: Build and push Retry Service
         uses: docker/build-push-action@v5
         with:
           context: ./retry-service
           push: true
-          tags: yourdockerhub/retry-service:latest
+          tags: d3mka369/retry-service:latest
 
       - name: Build and push Notification Storage
         uses: docker/build-push-action@v5
         with:
           context: ./notification-storage
           push: true
-          tags: yourdockerhub/notification-storage:latest
-
-
-
-
-
+          tags: d3mka369/notification-storage:latest

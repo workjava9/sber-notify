@@ -5,3 +5,5 @@ include("sms-service")
 include("push-service")
 include("retry-service")
 include("notification-storage")
+
+include("api-gateway")
