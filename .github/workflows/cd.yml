@@ -1,4 +1,4 @@
-name: CD - Docker Build & Push
+name: CD - Docker Build & Push (multi-service)
 
 on:
   push:
@@ -22,9 +22,44 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build and push API Gateway
         uses: docker/build-push-action@v5
         with:
-          context: ./src
+          context: ./api-gateway
           push: true
-          tags: yourdockerhub/sbernotify:latest
+          tags: yourdockerhub/api-gateway:latest
+
+      - name: Build and push Email Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./email-service
+          push: true
+          tags: yourdockerhub/email-service:latest
+
+      - name: Build and push SMS Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./sms-service
+          push: true
+          tags: yourdockerhub/sms-service:latest
+
+      - name: Build and push Push Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./push-service
+          push: true
+          tags: yourdockerhub/push-service:latest
+
+      - name: Build and push Retry Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./retry-service
+          push: true
+          tags: yourdockerhub/retry-service:latest
+
+      - name: Build and push Notification Storage
+        uses: docker/build-push-action@v5
+        with:
+          context: ./notification-storage
+          push: true
+          tags: yourdockerhub/notification-storage:latest
