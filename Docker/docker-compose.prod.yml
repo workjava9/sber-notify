@@ -25,43 +25,37 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: sber
     ports:
-      - "5433 :5432"
+      - "5432:5432"
 
   api-gateway:
-    build:
-      context: ../api-gateway
+    image: yourdockerhub/api-gateway:latest
     depends_on:
       - kafka
     ports:
       - "8080:8080"
 
   email-service:
-    build:
-      context: ../email-service
+    image: yourdockerhub/email-service:latest
     depends_on:
       - kafka
 
   sms-service:
-    build:
-      context: ../sms-service
+    image: yourdockerhub/sms-service:latest
     depends_on:
       - kafka
 
   push-service:
-    build:
-      context: ../push-service
+    image: yourdockerhub/push-service:latest
     depends_on:
       - kafka
 
   retry-service:
-    build:
-      context: ../retry-service
+    image: yourdockerhub/retry-service:latest
     depends_on:
       - kafka
 
   notification-storage:
-    build:
-      context: ../notification-storage
+    image: yourdockerhub/notification-storage:latest
     depends_on:
       - postgres
     ports:
