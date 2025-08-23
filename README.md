@@ -24,7 +24,7 @@
 - `sms-service` — consumer SMS-уведомлений (mock)
 - `push-service` — consumer Push-уведомлений (WebPush API mock)
 - `retry-service` — повторная доставка из Kafka DLQ
-- `notification-storage` — хранение статусов в PostgresSQL
+- `notification-storage` — хранение статусов в PostgresSQL (Spring Data Redis)
 - `notification-core` — DTO, enum's, общие модели
 
 
@@ -40,7 +40,8 @@
 6. Тестирование: JUnit 5, Spring Boot Test, Mockito
 7. Контейнеризация: Docker и docker-compose
 8. Мониторинг и метрики: Spring Boot Actuator, готов к интеграции с Prometheus
-9. Сборка проекта: Gradle с использованием Kotlin DSL
+9. Кеширование: Spring Data Redis для ускорения доступа к часто запрашиваемым данным
+ 10. Сборка проекта: Gradle с использованием Kotlin DSL
 
 ## Старт
 

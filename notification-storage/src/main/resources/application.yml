@@ -11,3 +11,10 @@ spring:
 
   application:
     name: notification-storage
+
+  cache:
+    type: redis
+
+  redis:
+    host: localhost
+    port: 6379

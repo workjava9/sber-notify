@@ -1,6 +1,7 @@
 package ru.sbernotify.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import ru.sbernotify.model.NotificationStatus;
 import ru.sbernotify.repository.NotificationStatusRepository;
@@ -24,4 +25,10 @@ public class NotificationStatusService {
     public NotificationStatus findById(UUID id) {
         return repository.findById(id).orElse(null);
     }
+
+    @Cacheable(value = "notifications", key = "#recipient + ':' + #type")
+    public List<NotificationStatus> findByRecipientAndType(String recipient, String type) {
+        return repository.findByRecipientAndType(recipient, type);
+    }
+
 }
