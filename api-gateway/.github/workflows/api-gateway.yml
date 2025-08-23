@@ -1,0 +1,17 @@
+name: api-gateway
+on:
+  push:
+    branches: [ master ]
+    paths: [ 'api-gateway/**', 'gradle/**', 'build.gradle*', 'settings.gradle*' ]
+  pull_request:
+    paths: [ 'api-gateway/**' ]
+jobs:
+  call:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: ':api-gateway'
+      dir: 'api-gateway'
+      image: 'workjava9/api-gateway'
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

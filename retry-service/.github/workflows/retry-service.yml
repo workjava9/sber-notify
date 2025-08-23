@@ -1,0 +1,15 @@
+name: retry-service
+on:
+  push:
+    branches: [ master ]
+    paths: [ 'retry-service/**', 'gradle/**', 'build.gradle*', 'settings.gradle*' ]
+  pull_request:
+    paths: [ 'retry-service/**' ]
+jobs:
+  call:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: ':retry-service'
+      dir: 'retry-service'
+      image: 'workjava9/retry-service'
+    secrets: { DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}, DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }} }

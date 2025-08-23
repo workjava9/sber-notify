@@ -1,0 +1,15 @@
+name: notification-storage
+on:
+  push:
+    branches: [ master ]
+    paths: [ 'notification-storage/**', 'gradle/**', 'build.gradle*', 'settings.gradle*' ]
+  pull_request:
+    paths: [ 'notification-storage/**' ]
+jobs:
+  call:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: ':notification-storage'
+      dir: 'notification-storage'
+      image: 'workjava9/notification-storage'
+    secrets: { DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}, DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }} }

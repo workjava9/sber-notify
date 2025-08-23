@@ -1,0 +1,15 @@
+name: sms-service
+on:
+  push:
+    branches: [ master ]
+    paths: [ 'sms-service/**', 'gradle/**', 'build.gradle*', 'settings.gradle*' ]
+  pull_request:
+    paths: [ 'sms-service/**' ]
+jobs:
+  call:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: ':sms-service'
+      dir: 'sms-service'
+      image: 'workjava9/sms-service'
+    secrets: { DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}, DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }} }

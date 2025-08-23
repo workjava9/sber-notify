@@ -1,0 +1,15 @@
+name: push-service
+on:
+  push:
+    branches: [ master ]
+    paths: [ 'push-service/**', 'gradle/**', 'build.gradle*', 'settings.gradle*' ]
+  pull_request:
+    paths: [ 'push-service/**' ]
+jobs:
+  call:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: ':push-service'
+      dir: 'push-service'
+      image: 'workjava9/push-service'
+    secrets: { DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}, DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }} }
