@@ -26,7 +26,16 @@
 - `retry-service` — повторная доставка из Kafka DLQ
 - `notification-storage` — хранение статусов в PostgresSQL (Spring Data Redis)
 - `notification-core` — DTO, enum's, общие модели
+  
+## Demo: Kafka Lab
 
+В дополнение к основным микросервисам, проект сопровождается учебной песочницей **Kafka Lab** — демонстрацией продюсера и консьюмера на Spring Boot + Kafka + Prometheus.  
+
+Kafka Lab используется для иллюстрации работы **event-driven архитектуры**:  
+- `user-events-producer` публикует события (`UserEvent`) в Kafka-топик  
+- `analytics-consumer` принимает события и собирает метрики через Micrometer  
+
+Подробнее можно посмотреть в репозитории [Kafka Lab](https://github.com/workjava9/kafka-lab).
 
 ## Технологический стек
 
