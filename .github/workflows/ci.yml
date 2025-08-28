@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [ master ]
+    tags: [ "v*.*.*" ]
 
 permissions:
   contents: read
@@ -21,6 +22,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
+    outputs:
+      email_changed:        ${{ steps.filter.outputs.email }}
+      sms_changed:          ${{ steps.filter.outputs.sms }}
+      push_changed:         ${{ steps.filter.outputs.push }}
+      api_changed:          ${{ steps.filter.outputs.api }}
+      notification_changed: ${{ steps.filter.outputs.notification }}
+      retry_changed:        ${{ steps.filter.outputs.retry }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,31 +61,22 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Unit & integration tests
-        run: ./gradlew clean test --no-daemon --stacktrace
+      - name: Unit & integration tests (all modules)
+        run: ./gradlew clean test --no-daemon --stacktrace --warning-mode all
 
-      - name: Publish JUnit report
+      - name: Publish test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: junit-reports
           path: |
-            **/build/test-results/test/*.xml
-            **/build/reports/tests/test
-
-    outputs:
-      email_changed: ${{ steps.filter.outputs.email }}
-      sms_changed: ${{ steps.filter.outputs.sms }}
-      push_changed: ${{ steps.filter.outputs.push }}
-      api_changed: ${{ steps.filter.outputs.api }}
-      notification_changed: ${{ steps.filter.outputs.notification }}
-      retry_changed: ${{ steps.filter.outputs.retry }}
+            **/build/test-results/test/**
+            **/build/reports/tests/test/**
 
   build_and_push:
     name: Build & Push ${{ matrix.svc.name }}
     runs-on: ubuntu-latest
     needs: test
-    if: github.event_name != 'pull_request'
     strategy:
       fail-fast: false
       matrix:
@@ -88,10 +87,27 @@ jobs:
           - { name: push-service,         dir: 'push-service',         image: 'ghcr.io/${{ github.repository }}-push-service' }
           - { name: notification-storage, dir: 'notification-storage', image: 'ghcr.io/${{ github.repository }}-notification-storage' }
           - { name: retry-service,        dir: 'retry-service',        image: 'ghcr.io/${{ github.repository }}-retry-service' }
-    env:
-      JAVA_OPTS: ""
+    if: |
+      github.event_name != 'pull_request' && (
+        startsWith(github.ref, 'refs/tags/')
+        || github.ref == 'refs/heads/master'
+        || (matrix.svc.name == 'api-gateway'           && needs.test.outputs.api_changed == 'true')
+        || (matrix.svc.name == 'email-service'         && needs.test.outputs.email_changed == 'true')
+        || (matrix.svc.name == 'sms-service'           && needs.test.outputs.sms_changed == 'true')
+        || (matrix.svc.name == 'push-service'          && needs.test.outputs.push_changed == 'true')
+        || (matrix.svc.name == 'notification-storage'  && needs.test.outputs.notification_changed == 'true')
+        || (matrix.svc.name == 'retry-service'         && needs.test.outputs.retry_changed == 'true')
+      )
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup JDK 17 (with Gradle cache)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
@@ -105,12 +121,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build JAR
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Gradle build (service)
+      - name: Build (Gradle) — ${{ matrix.svc.name }}
         run: |
-          ./gradlew :${{ matrix.svc.name }}:clean :${{ matrix.svc.name }}:build --no-daemon --stacktrace
+          ./gradlew :${{ matrix.svc.name }}:clean :${{ matrix.svc.name }}:build --no-daemon --stacktrace --warning-mode all
 
       - name: Compute tags
         id: tags
@@ -122,7 +135,7 @@ jobs:
             echo "tags=${IMG}:latest,${IMG}:sha-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build & push (with cache)
+      - name: Build & push Docker image
         uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.svc.dir }}
@@ -130,6 +143,8 @@ jobs:
           tags: ${{ steps.tags.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          provenance: false
+
   deploy:
     name: Deploy to host
     runs-on: ubuntu-latest
@@ -137,6 +152,7 @@ jobs:
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
+
       - name: Start SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
