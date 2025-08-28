@@ -35,3 +35,13 @@ out/
 
 ### VS Code ###
 .vscode/
+.git
+**/.git
+**/.gradle
+**/build
+**/out
+**/*.iml
+**/.idea
+Dockerfile
+docker-compose.yml
+
